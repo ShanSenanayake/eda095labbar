@@ -1,0 +1,117 @@
+nslookup www.lth.se
+
+Server:		130.235.34.36
+Address:	130.235.34.36#53
+
+Non-authoritative answer:
+Name:	www.lth.se
+Address: 130.235.209.220
+
+---------------------
+
+nslookup 130.235.35.100
+
+Server:		130.235.34.36
+Address:	130.235.34.36#53
+
+
+Non-authoritative answer:
+100.35.235.130.in-addr.arpa	name = login.student.lth.se.
+
+Authoritative answers can be found from:
+235.130.in-addr.arpa	nameserver = nic.lth.se.
+235.130.in-addr.arpa	nameserver = nic2.lth.se.
+235.130.in-addr.arpa	nameserver = b.ns.kth.se.
+b.ns.kth.se	internet address = 130.237.72.250
+b.ns.kth.se	has AAAA address 2001:6b0:1::250
+nic.lth.se	internet address = 130.235.20.3
+nic2.lth.se	internet address = 130.235.20.5
+
+-------------------------
+
+
+traceroute to www.colorado.edu (128.138.129.98), 30 hops max, 60 byte packets
+ 1  d001b-gw-190.student.lth.se (130.235.34.2)  0.977 ms  0.967 ms  0.982 ms
+ 2  c001--d001b.net.lu.se (130.235.217.45)  0.661 ms  0.686 ms  0.785 ms
+ 3  x001--c001.net.lu.se (130.235.217.10)  7.261 ms  7.272 ms  7.296 ms
+
+--sunet
+ 4  lu-br1.sunet.se (193.11.20.9)  0.370 ms  0.372 ms  0.366 ms
+ 5  m1fre-xe-5-2-0.sunet.se (130.242.85.1)  47.760 ms  47.794 ms  9.814 ms
+ 6  t1fre-ae5-v1.sunet.se (130.242.83.46)  9.914 ms  9.965 ms  9.947 ms
+--end sunet
+
+--nordunet
+ 7  se-fre.nordu.net (109.105.102.9)  9.920 ms  9.925 ms  9.914 ms
+ 8  dk-ore.nordu.net (109.105.97.130)  18.687 ms  18.621 ms  18.621 ms
+ 9  dk-uni.nordu.net (109.105.97.133)  19.157 ms  19.069 ms  19.099 ms
+10  us-man.nordu.net (109.105.97.139)  113.267 ms  113.475 ms  113.410 ms
+--end nordunet
+
+--internet2
+11  xe-2-3-0.118.rtr.newy32aoa.net.internet2.edu (109.105.98.10)  126.240 ms us-ash.nordu.net (109.105.97.141)  113.678 ms xe-2-3-0.118.rtr.newy32aoa.net.internet2.edu (109.105.98.10)  126.251 ms
+12  us-man.nordu.net (109.105.97.142)  119.175 ms et-10-0-0.116.rtr.chic.net.internet2.edu (198.71.46.166)  135.199 ms  135.169 ms
+13  ae0.3454.core-l3.frgp.net (192.43.217.223)  162.966 ms xe-2-3-0.118.rtr.newy32aoa.net.internet2.edu (109.105.98.10)  133.618 ms ae0.3454.core-l3.frgp.net (192.43.217.223)  162.921 ms
+14  et-10-0-0.116.rtr.chic.net.internet2.edu (198.71.46.166)  141.101 ms ucb-re-frgpl3.colorado.edu (198.59.55.1)  157.902 ms et-10-0-0.116.rtr.chic.net.internet2.edu (198.71.46.166)  141.266 ms
+--end internet2
+
+15  ae0.3454.core-l3.frgp.net (192.43.217.223)  169.843 ms  169.105 ms  169.100 ms
+
+--colorado
+16  ucb-re-frgpl3.colorado.edu (198.59.55.1)  163.916 ms  164.037 ms  164.381 ms
+17  hut-fw.colorado.edu (128.138.81.249)  158.868 ms  158.852 ms compmx-tcommx.colorado.edu (128.138.81.253)  169.919 ms
+18  fw-juniper.colorado.edu (128.138.81.194)  170.267 ms  170.654 ms
+--end colorado
+
+
+------------------------------
+
+netstat -i
+
+Kernel Interface table
+Iface   MTU Met   RX-OK RX-ERR RX-DRP RX-OVR    TX-OK TX-ERR TX-DRP TX-OVR Flg
+eth0       1500 0   4379349      0      0 0        898482      0      0      0 BMRU
+lo        65536 0     10223      0      0 0         10223      0      0      0 LRU
+
+---------------------
+
+netstat -r
+
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
+default         defgw-b190.stud 0.0.0.0         UG        0 0          0 eth0
+130.235.34.0    *               255.255.254.0   U         0 0          0 eth0
+
+--------------------------------
+
+netstat -r -n
+
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
+0.0.0.0         130.235.34.1    0.0.0.0         UG        0 0          0 eth0
+130.235.34.0    0.0.0.0         255.255.254.0   U         0 0          0 eth0
+
+--------------------
+netstat -r -a
+
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
+default         defgw-b190.stud 0.0.0.0         UG        0 0          0 eth0
+130.235.34.0    *               255.255.254.0   U         0 0          0 eth0
+
+--------------------
+
+netstat -a
+
+tcp
+tcp6
+udp
+udp6
+
+-----------------------
+
+ESTABLISHED
+LISTEN
+TIME_WAIT
+
+-------------------------
