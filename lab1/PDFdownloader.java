@@ -1,3 +1,4 @@
+package lab1;
 
 
 import java.io.File;
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
-public class Main {
+public class PDFdownloader {
 
 	public static void main(String[] args) {
 		try {
