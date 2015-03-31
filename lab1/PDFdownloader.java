@@ -49,6 +49,7 @@ public class PDFdownloader {
 				while((offset = is.read(buffer))!=-1){
 					os.write(buffer, 0, offset);
 				}
+				os.close();
 				
 			}
 			siteScanner.close();
