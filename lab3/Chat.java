@@ -14,8 +14,8 @@ public class Chat {
 			while(true){
 				Socket client = server.accept();
 				id++;
-				WriterThread wt = new WriterThread(mailbox,client.getOutputStream(),id);
-				ReaderThread rt = new ReaderThread(mailbox,client,id);
+				ClientWriterThread wt = new ClientWriterThread(mailbox,client.getOutputStream(),id);
+				ClientReaderThread rt = new ClientReaderThread(mailbox,client,id);
 				mailbox.register(id);
 				wt.start();
 				rt.start();

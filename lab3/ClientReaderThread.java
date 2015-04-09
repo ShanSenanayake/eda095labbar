@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 
-public class ReaderThread extends Thread {
+public class ClientReaderThread extends Thread {
 
 	private Mailbox mailbox;
 	private Socket client;
 	private int id;
 
-	public ReaderThread(Mailbox mailbox, Socket client, int id) {
+	public ClientReaderThread(Mailbox mailbox, Socket client, int id) {
 		this.mailbox = mailbox;
 		this.client = client;
 		this.id = id;
