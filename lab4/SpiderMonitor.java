@@ -40,7 +40,6 @@ public class SpiderMonitor {
 		visited.add(currentURL);
 		if(visited.size()>=LIMIT || (toBeVisited.isEmpty() && currentlyVisiting.isEmpty())){
 			timeToKill = true;
-			notifyAll();
 		}
 	}
 	
@@ -57,17 +56,26 @@ public class SpiderMonitor {
 		return visited;
 	}
 
-	public synchronized boolean hasVisited(String found) {
+	public synchronized boolean hasVisited(String found) throws InterruptedException {
+		if(timeToKill){
+			throw new InterruptedException();
+		}
 		// TODO Auto-generated method stub
 		return visited.contains(found);
 	}
 
-	public synchronized void addToVisit(String found) {
+	public synchronized void addToVisit(String found) throws InterruptedException {
+		if(timeToKill){
+			throw new InterruptedException();
+		}
 		toBeVisited.add(found);
 		notifyAll();
 	}
 
-	public synchronized void addMailAddresses(String found) {
+	public synchronized void addMailAddresses(String found) throws InterruptedException {
+		if(timeToKill){
+			throw new InterruptedException();
+		}
 		mailAddresses.add(found);
 		
 	}

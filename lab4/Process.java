@@ -19,35 +19,36 @@ public class Process implements Runnable {
 	@Override
 	public void run() {
 		try {
-		while (!Thread.interrupted()) {
-			String currentURL;
-			
+			while (!Thread.interrupted()) {
+				String currentURL;
+
 				currentURL = monitor.getAddress();
-			URL url;
-			try {
-				url = new URL(currentURL);
-			BufferedReader br = new BufferedReader(new InputStreamReader(
-					url.openStream()));
-			Pattern httpPattern = Pattern
-					.compile("<a[^>]*?href=\"(http.*?)\"[^>]*>");
-			Pattern mailPattern = Pattern
-					.compile("<a[^>]*?href=\"mailto:(.*?)\"[^>]*>");
-			Pattern framePattern = Pattern
-					.compile("<frame[^>]*?src=\"(.*?)\"[^>]*?>");
-			StringBuilder sb = new StringBuilder();
-			String line = br.readLine();
-			while (line != null) {
-				sb.append(line);
-				line = br.readLine();
+				URL url;
+				try {
+					url = new URL(currentURL);
+					BufferedReader br = new BufferedReader(
+							new InputStreamReader(url.openStream()));
+					Pattern httpPattern = Pattern
+							.compile("<a[^>]*?href=\"(http.*?)\"[^>]*>");
+					Pattern mailPattern = Pattern
+							.compile("<a[^>]*?href=\"mailto:(.*?)\"[^>]*>");
+					Pattern framePattern = Pattern
+							.compile("<frame[^>]*?src=\"(.*?)\"[^>]*?>");
+					StringBuilder sb = new StringBuilder();
+					String line = br.readLine();
+					while (line != null) {
+						sb.append(line);
+						line = br.readLine();
+					}
+					match(httpPattern, sb.toString(), SpiderMonitor.HTTP, null);
+					match(mailPattern, sb.toString(), SpiderMonitor.MAIL, null);
+					match(framePattern, sb.toString(), SpiderMonitor.FRAME,
+							currentURL);
+					monitor.addVisited(currentURL);
+				} catch (MalformedURLException e) {
+				} catch (IOException e) {
+				}
 			}
-			match(httpPattern, sb.toString(), SpiderMonitor.HTTP, null);
-			match(mailPattern, sb.toString(), SpiderMonitor.MAIL, null);
-			match(framePattern, sb.toString(), SpiderMonitor.FRAME, currentURL);
-			monitor.addVisited(currentURL);
-			} catch (MalformedURLException e) {
-			} catch (IOException e) {
-			}
-		}
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -55,7 +56,8 @@ public class Process implements Runnable {
 
 	}
 
-	private void match(Pattern p, String text, int pattern, String absolute) {
+	private void match(Pattern p, String text, int pattern, String absolute)
+			throws InterruptedException {
 		Matcher matcher = p.matcher(text);
 		while (matcher.find()) {
 			String found = matcher.group(1);
