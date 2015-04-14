@@ -1,7 +1,5 @@
 package lab4;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 
 public class MultiThreadWebcrawler {
@@ -33,7 +31,6 @@ public class MultiThreadWebcrawler {
 					+ mailAddresses.size() + " HTTP addresses visited "
 					+ httpAddresses.size());
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
