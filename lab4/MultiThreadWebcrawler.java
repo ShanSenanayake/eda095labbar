@@ -10,7 +10,7 @@ public class MultiThreadWebcrawler {
 		Thread[] threads = new Thread[NBR_THREADS];
 		long time = System.currentTimeMillis();
 		for (int i = 0; i < NBR_THREADS; i++) {
-			threads[i] = new Thread(new Process(spider));
+			threads[i] = new Thread(new Process(spider,i));
 			threads[i].start();
 		}
 		try {
@@ -19,15 +19,15 @@ public class MultiThreadWebcrawler {
 				threads[i].interrupt();
 			}
 			HashSet<String> httpAddresses = spider.getHTTPAdresses();
-			System.out.println("Crawling finished, Mail addresses found: "
-					+ mailAddresses.size() + " HTTP addresses visited "
-					+ httpAddresses.size());
-			for (String s : mailAddresses) {
-				System.out.println(s);
-			}
-			for (String s : httpAddresses) {
-				System.out.println(s);
-			}
+//			System.out.println("Crawling finished, Mail addresses found: "
+//					+ mailAddresses.size() + " HTTP addresses visited "
+//					+ httpAddresses.size());
+//			for (String s : mailAddresses) {
+//				System.out.println(s);
+//			}
+//			for (String s : httpAddresses) {
+//				System.out.println(s);
+//			}
 			System.out.println("Crawling finished, Mail addresses found: "
 					+ mailAddresses.size() + " HTTP addresses visited "
 					+ httpAddresses.size());

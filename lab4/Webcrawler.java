@@ -11,6 +11,11 @@ import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 public class Webcrawler {
 	private static final int HTTP = 1;
 	private static final int MAIL = 2;
@@ -45,49 +50,12 @@ public class Webcrawler {
 		String currentURL = toBeVisited.pop();
 		url = new URL(currentURL);
 		System.out.println(url.toString());
-		BufferedReader br = new BufferedReader(new InputStreamReader(
-				url.openStream()));
-		Pattern httpPattern = Pattern
-				.compile("<a[^>]*?href=\"(http.*?)\"[^>]*>");
-		Pattern mailPattern = Pattern
-				.compile("<a[^>]*?href=\"mailto:(.*?)\"[^>]*>");
-		Pattern framePattern = Pattern
-				.compile("<frame[^>]*?src=\"(.*?)\"[^>]*?>");
-		StringBuilder sb = new StringBuilder();
-		String line = br.readLine();
-		while (line != null) {
-			sb.append(line);
-			line = br.readLine();
+		Document doc =Jsoup.connect(currentURL).get();
+		Elements links = doc.select("a[href]");
+		Elements relative = doc.select("frame[src]");
+		for(Element l: links){
+			System.out.println(l.absUrl("href"));
+			System.out.println(l.absUrl("mailto"));
 		}
-		match(httpPattern, sb.toString(), HTTP, null);
-		match(mailPattern, sb.toString(), MAIL, null);
-		match(framePattern, sb.toString(), FRAME, currentURL);
-		visited.add(currentURL);
-	}
-
-	// finds and matcher depending of the pattern
-	public static void match(Pattern p, String text, int pattern,
-			String absolute) {
-		Matcher matcher = p.matcher(text);
-		while (matcher.find()) {
-			String found = matcher.group(1);
-			switch (pattern) {
-			case FRAME:
-				found = absolute + found;
-				/* FALLTHROUGH */
-			case HTTP:
-				if (!visited.contains(found)) {
-					toBeVisited.addLast(found);
-				}
-				break;
-			case MAIL:
-				mailAddresses.add(found);
-				break;
-			default:
-				System.out.println(found);
-			}
-
-		}
-
 	}
 }

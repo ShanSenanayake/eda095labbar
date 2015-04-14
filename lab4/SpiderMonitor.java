@@ -43,6 +43,7 @@ public class SpiderMonitor {
 		visited.add(currentURL);
 		if(visited.size()>=LIMIT || (toBeVisited.isEmpty() && currentlyVisiting.isEmpty())){
 			timeToKill = true;
+			notifyAll();
 			Thread.currentThread().interrupt();
 		}
 	}
@@ -75,6 +76,13 @@ public class SpiderMonitor {
 
 		mailAddresses.add(found);
 		
+	}
+
+
+	public synchronized int[] getSizes() {
+		// TODO Auto-generated method stub
+		int[] temp = {mailAddresses.size(), visited.size(), toBeVisited.size() };
+		return temp;
 	}
 
 }

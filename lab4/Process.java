@@ -1,19 +1,22 @@
 package lab4;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 public class Process implements Runnable {
 
 	private SpiderMonitor monitor;
+	private int id;
 
-	public Process(SpiderMonitor monitor) {
+	public Process(SpiderMonitor monitor, int id) {
 		this.monitor = monitor;
+		this.id = id;
 	}
 
 	@Override
@@ -23,60 +26,35 @@ public class Process implements Runnable {
 				String currentURL;
 
 				currentURL = monitor.getAddress();
-				URL url = null;
+				int[] sizes = monitor.getSizes();
+				System.out.println("Thread " + id + "\tProccessing: " + currentURL + " Processed " + sizes[0] + " mails, " + sizes[1] + " URLS. Queue: " + sizes[2] );
 				try {
-					url = new URL(currentURL);
-					BufferedReader br = new BufferedReader(
-							new InputStreamReader(url.openStream()));
-					Pattern httpPattern = Pattern
-							.compile("<a[^>]*?href=\"(http.*?)\"[^>]*>");
-					Pattern mailPattern = Pattern
-							.compile("<a[^>]*?href=\"mailto:(.*?)\"[^>]*>");
-					Pattern framePattern = Pattern
-							.compile("<frame[^>]*?src=\"(.*?)\"[^>]*?>");
-					StringBuilder sb = new StringBuilder();
-					String line = br.readLine();
-					while (line != null) {
-						sb.append(line);
-						line = br.readLine();
+					Document doc = Jsoup.connect(currentURL).get();
+					Elements links = doc.select("a[href]");
+					Elements frameLinks = doc.select("frame[src]");
+					for (Element l : links) {
+						String found = l.absUrl("href");
+						if (!monitor.hasVisited(found) && found.startsWith("http")) {
+							monitor.addToVisit(found);
+						}else if(found.startsWith("mailto")){
+							
+							monitor.addMailAddresses(found);
+						}
 					}
-					match(httpPattern, sb.toString(), SpiderMonitor.HTTP, null);
-					match(mailPattern, sb.toString(), SpiderMonitor.MAIL, null);
-					match(framePattern, sb.toString(), SpiderMonitor.FRAME,
-							currentURL);
+					for (Element f : frameLinks) {
+						String found = f.absUrl("href");
+						if (!monitor.hasVisited(found)) {
+							monitor.addToVisit(found);
+						}
+					}
 					monitor.addVisited(currentURL);
-				} catch (MalformedURLException e) {
 				} catch (IOException e) {
-				} catch (IllegalArgumentException e){
-					System.out.println("url: " + url.toString());
+					// TODO Auto-generated catch block
 				}
+
 			}
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
-		}
-
-	}
-
-	private void match(Pattern p, String text, int pattern, String absolute) {
-		Matcher matcher = p.matcher(text);
-		while (matcher.find()) {
-			String found = matcher.group(1);
-			switch (pattern) {
-			case SpiderMonitor.FRAME:
-				found = absolute + found;
-				/* FALLTHROUGH */
-			case SpiderMonitor.HTTP:
-				if (!monitor.hasVisited(found)) {
-					monitor.addToVisit(found);
-				}
-				break;
-			case SpiderMonitor.MAIL:
-				monitor.addMailAddresses(found);
-				break;
-			default:
-				System.out.println(found);
-			}
-
 		}
 
 	}

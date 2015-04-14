@@ -21,7 +21,7 @@ public class ClientWriterThread extends Thread {
 			while (!isInterrupted()) {
 				String message = mailbox.read(id);
 				if (message != null) { 
-					ow.write(message);
+					ow.write(message+System.lineSeparator());
 					ow.flush();
 				} else {
 					this.interrupt();
