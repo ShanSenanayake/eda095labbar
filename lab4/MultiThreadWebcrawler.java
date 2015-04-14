@@ -10,6 +10,7 @@ public class MultiThreadWebcrawler {
 	public static void main(String[] args) {
 		SpiderMonitor spider = new SpiderMonitor(args[0]);
 		Thread[] threads = new Thread[NBR_THREADS];
+		long time = System.currentTimeMillis();
 		for (int i = 0; i < NBR_THREADS; i++) {
 			threads[i] = new Thread(new Process(spider));
 			threads[i].start();
@@ -32,6 +33,7 @@ public class MultiThreadWebcrawler {
 			System.out.println("Crawling finished, Mail addresses found: "
 					+ mailAddresses.size() + " HTTP addresses visited "
 					+ httpAddresses.size());
+			System.out.println("Time it took: " + (System.currentTimeMillis()-time)/1000.0 + " s");
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -29,6 +29,9 @@ public class SpiderMonitor {
 	public synchronized String getAddress() throws InterruptedException {
 		while(toBeVisited.isEmpty()){
 			wait();
+			if(visited.size()+currentlyVisiting.size() >= LIMIT){
+				Thread.currentThread().interrupt();
+			}
 		}
 		String temp = toBeVisited.pop();
 		currentlyVisiting.add(temp);
@@ -40,6 +43,7 @@ public class SpiderMonitor {
 		visited.add(currentURL);
 		if(visited.size()>=LIMIT || (toBeVisited.isEmpty() && currentlyVisiting.isEmpty())){
 			timeToKill = true;
+			Thread.currentThread().interrupt();
 		}
 	}
 	
@@ -56,26 +60,19 @@ public class SpiderMonitor {
 		return visited;
 	}
 
-	public synchronized boolean hasVisited(String found) throws InterruptedException {
-		if(timeToKill){
-			throw new InterruptedException();
-		}
+	public synchronized boolean hasVisited(String found) {
 		// TODO Auto-generated method stub
 		return visited.contains(found);
 	}
 
-	public synchronized void addToVisit(String found) throws InterruptedException {
-		if(timeToKill){
-			throw new InterruptedException();
-		}
+	public synchronized void addToVisit(String found) {
+
 		toBeVisited.add(found);
 		notifyAll();
 	}
 
-	public synchronized void addMailAddresses(String found) throws InterruptedException {
-		if(timeToKill){
-			throw new InterruptedException();
-		}
+	public synchronized void addMailAddresses(String found) {
+
 		mailAddresses.add(found);
 		
 	}
