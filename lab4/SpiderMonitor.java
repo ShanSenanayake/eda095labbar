@@ -8,7 +8,7 @@ public class SpiderMonitor {
 	public static final int HTTP = 1;
 	public static final int MAIL = 2;
 	public static final int FRAME = 0;
-	private static final int LIMIT = 1000;
+	private static final int LIMIT = 100;
 	
 	private boolean timeToKill;
 	private LinkedList<String> toBeVisited;
