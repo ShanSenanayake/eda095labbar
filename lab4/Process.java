@@ -19,11 +19,11 @@ public class Process implements Runnable {
 	@Override
 	public void run() {
 		try {
-			while (!Thread.interrupted()) {
+			while (!Thread.currentThread().isInterrupted()) {
 				String currentURL;
 
 				currentURL = monitor.getAddress();
-				URL url;
+				URL url = null;
 				try {
 					url = new URL(currentURL);
 					BufferedReader br = new BufferedReader(
@@ -47,6 +47,8 @@ public class Process implements Runnable {
 					monitor.addVisited(currentURL);
 				} catch (MalformedURLException e) {
 				} catch (IOException e) {
+				} catch (IllegalArgumentException e){
+					System.out.println("url: " + url.toString());
 				}
 			}
 		} catch (InterruptedException e1) {
@@ -55,8 +57,7 @@ public class Process implements Runnable {
 
 	}
 
-	private void match(Pattern p, String text, int pattern, String absolute)
-			throws InterruptedException {
+	private void match(Pattern p, String text, int pattern, String absolute) {
 		Matcher matcher = p.matcher(text);
 		while (matcher.find()) {
 			String found = matcher.group(1);
