@@ -19,12 +19,12 @@ public class MultiThreadWebcrawler {
 				threads[i].interrupt();
 			}
 			HashSet<String> httpAddresses = spider.getHTTPAdresses();
-//			System.out.println("Crawling finished, Mail addresses found: "
-//					+ mailAddresses.size() + " HTTP addresses visited "
-//					+ httpAddresses.size());
-//			for (String s : mailAddresses) {
-//				System.out.println(s);
-//			}
+			System.out.println("Crawling finished, Mail addresses found: "
+					+ mailAddresses.size() + " HTTP addresses visited "
+					+ httpAddresses.size());
+			for (String s : mailAddresses) {
+				System.out.println(s);
+			}
 //			for (String s : httpAddresses) {
 //				System.out.println(s);
 //			}
