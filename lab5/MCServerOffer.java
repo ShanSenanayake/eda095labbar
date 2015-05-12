@@ -1,40 +1,48 @@
 package lab5;
 
 import java.net.*;
+import java.text.DateFormat;
+import java.util.Date;
 import java.io.*;
 
 public class MCServerOffer {
 	public final static String TimeServer_request = "0";
 	public final static String TimeAndDate_request = "1";
-	
+
 	public static void main(String args[]) {
 		try {
-			MulticastSocket ms = new MulticastSocket(8989);
-			InetAddress ia;
-			ia = InetAddress.getByName("experiment.mcast.net");
-			ms.joinGroup(ia);
+			DatagramSocket ms = new DatagramSocket(8990);
+			Thread serverOffer = new Thread(new MCServerOfferRunnable(
+					ms.getLocalPort()));
+			serverOffer.start();
 			while (true) {
+				System.out.println("Timeserver Running...");
 				byte[] buf = new byte[65536];
 				DatagramPacket dp = new DatagramPacket(buf, buf.length);
 				ms.receive(dp);
 				String s = new String(dp.getData(), 0, dp.getLength());
-				String[] command = s.split(" ");
-				/*  
-				 * Command: "0" for TimeServer_request with no more arguments
-				 * 			"1" for TimeAndDate_request plus space followed by an additional "0" or "1" for date and time respectively.
-				 */
-				switch(command[0]){
-				case TimeServer_request:
-					System.out.println("Time request received, sending response back.");
-					Thread serverOffer = new Thread(new MCServerOfferRunnable(ms,
-							dp));
-					serverOffer.start();
+				byte[] sendData = new byte[1];
+				Date date = new Date();
+				DateFormat format;
+
+				switch (s) {
+				case "0":
+					format = DateFormat.getDateInstance();
+					sendData = format.format(date).getBytes();
 					break;
-				case TimeAndDate_request:
-					Thread timeServerThread = new Thread(new TimeServerRunnable(Integer.parseInt(command[1]),dp.getAddress(),dp.getPort(),ms));
-					timeServerThread.start();
+				case "1":
+					format = DateFormat.getTimeInstance();
+					sendData = format.format(date).getBytes();
+					break;
+				default:
+					sendData = "ERROR invalid command".getBytes();
 					break;
 				}
+				DatagramPacket sendPacket = new DatagramPacket(sendData,
+						sendData.length, dp.getAddress(), dp.getPort());
+
+				ms.send(sendPacket);
+
 			}
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block

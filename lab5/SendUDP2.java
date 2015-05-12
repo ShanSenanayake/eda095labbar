@@ -12,14 +12,16 @@ public class SendUDP2 {
 	private static String REQUEST_COMMAND = "0";
 	private static DatagramPacket reply;
 	private static MulticastSocket ms;
+	private static int port;
 
 	public static void main(String[] args) {
 		try {
 			discoverServer();
+			DatagramSocket ds = new DatagramSocket();
 			while (true) {
 				int ch;
 				String s = new String();
-				s += "1 "; // This tells MCServerOffer that we want to send a
+				 // This tells MCServerOffer that we want to send a
 							// date or time request. Which one is inputted using
 							// system.in
 				do {
@@ -31,10 +33,10 @@ public class SendUDP2 {
 				System.out.println("Sending message: " + s);
 				byte[] buf = s.getBytes();
 				DatagramPacket dp = new DatagramPacket(buf, buf.length,
-						reply.getAddress(), reply.getPort());
-				ms.send(dp);
+						reply.getAddress(),port);
+				ds.send(dp);
 				DatagramPacket packet = new DatagramPacket(new byte[1024], 1024);
-				ms.receive(packet);
+				ds.receive(packet);
 				System.out.println(new String(packet.getData()));
 			}
 		} catch (IOException e) {
@@ -54,9 +56,20 @@ public class SendUDP2 {
 			ms.send(requestServer);
 			reply = new DatagramPacket(new byte[1024], 1024);
 			ms.receive(reply);
+			port = byteArrayToInt(reply.getData());
+			System.out.println("found server " + port);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
+
+	public static int byteArrayToInt(byte[] b) 
+	{
+	    return   b[3] & 0xFF |
+	            (b[2] & 0xFF) << 8 |
+	            (b[1] & 0xFF) << 16 |
+	            (b[0] & 0xFF) << 24;
+	}
+
 
 }
